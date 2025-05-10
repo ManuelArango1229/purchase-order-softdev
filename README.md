@@ -1,23 +1,18 @@
-# SofDev API Gateway
+# SofDev Purchase Order
 
-Este es el **API Gateway** de **SofDev**, desarrollado con **Spring Cloud Gateway**. Su propósito es gestionar las solicitudes hacia los microservicios del ecosistema de SoftDev, actuando como un punto central de entrada para la comunicación entre clientes y servicios.
+Este es el **microservicio de órdenes de compra** del ecosistema **SofDev**, desarrollado con **Spring Boot**. Su objetivo es gestionar la creación, actualización y consulta de órdenes de compra dentro de la plataforma, sirviendo como componente clave del sistema distribuido.
 
 ## 🚀 Tecnologías
 
 - **Java 21**
 - **Spring Boot 3.2.4**
-- **Spring Cloud Gateway**
 
 ## 📂 Estructura del Proyecto
 
 ```
-sofdev-api-gateway/
-├── src/main/java/com/sofdev/gateway
-│   ├── SofdevApiGatewayApplication.java
-│   ├── config/
-│   │   ├── RouteConfig.java
-│   │   ├── GlobalFilter.java
-│   │   └── SecurityConfig.java
+sofdev-purchase_order/
+├── src/main/java/com/sofdev/purchase_order
+│   ├── SofdevPurchase-OrderApplication.java
 │   └── controllers/
 ├── src/main/resources/
 │   ├── application.yml
@@ -26,25 +21,7 @@ sofdev-api-gateway/
 └── README.md
 ```
 
-## ⚙️ Configuración
-
-El API Gateway enruta solicitudes a los microservicios según `application.yml`:
-
-```yaml
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: auth-service
-          uri: http://localhost:8081
-          predicates:
-            - Path=/auth/**
-
-        - id: users-service
-          uri: http://localhost:8082
-          predicates:
-            - Path=/users/**
-```
+````
 
 ## 🏗️ Instalación y Ejecución
 
@@ -53,7 +30,7 @@ spring:
 ```sh
 git clone git@github.com:SofDev/sofdev-api-gateway.git
 cd sofdev-api-gateway
-```
+````
 
 ### 2️⃣ Construir el proyecto con Maven
 
