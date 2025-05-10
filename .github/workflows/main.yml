@@ -28,8 +28,8 @@ jobs:
 
       - name: 🏗️ Build Docker image
         run: |
-          docker build -t manuelarango1229/softdev:user-service .
+          docker build -t manuelarango1229/softdev:purchase-order-service .
 
       - name: 📤 Push image to Docker Hub
         run: |
-          docker push manuelarango1229/softdev:user-service
+          docker push manuelarango1229/softdev:purchase-order-service
