@@ -1,4 +1,4 @@
 /**
- * Paquete principal de la API Gateway de SoftDev.
+ * Paquete principal de purchase order de softdev.
  */
-package com.softdev.api_gateway;
+package com.softdev.purchase_order;

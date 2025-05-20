@@ -1,4 +1,4 @@
-package com.softdev.api_gateway;
+package com.softdev.purchase_order;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class ApiGatewayApplication {
     /**
-     * Método principal que inicia la API Gateway.
+     * Método principal que inicia purchase-order.
      *
      * @param args Argumentos de línea de comandos.
      */
