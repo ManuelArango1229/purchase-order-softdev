@@ -1,11 +1,12 @@
 package com.softdev.purchase_order.domain.repositories;
 
 import com.softdev.purchase_order.domain.entities.Orden;
+import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
 
 /**
  * Interfaz que define el caso de uso para realizar una orden.
  */
-public interface RealizarOrdenUseCase {
+public interface RealizarOrdenPort {
     /**
      * Realiza una orden y la guarda en el repositorio.
      *

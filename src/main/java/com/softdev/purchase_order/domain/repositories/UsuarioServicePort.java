@@ -1,5 +1,7 @@
 package com.softdev.purchase_order.domain.repositories;
 
+import com.softdev.purchase_order.use_cases.dto.response.UsuarioResponse;
+
 /**
  * Interfaz que define el caso de uso para obtener un usuario.
  */
