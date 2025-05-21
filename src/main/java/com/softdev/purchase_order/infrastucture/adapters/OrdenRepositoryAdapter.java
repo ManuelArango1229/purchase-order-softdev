@@ -32,10 +32,10 @@ public class OrdenRepositoryAdapter implements OrdenRepositoryPort {
     /**
      * Constructor que inicializa el adaptador con el repositorio de Spring Data.
      *
-     * @param repository Repositorio de Spring Data para la entidad Orden.
+     * @param repositoryParam Repositorio de Spring Data para la entidad Orden.
      */
-    public OrdenRepositoryAdapter(final SpringDataOrdenRepository repository) {
-        this.repository = repository;
+    public OrdenRepositoryAdapter(final SpringDataOrdenRepository repositoryParam) {
+        this.repository = repositoryParam;
     }
 
     /**

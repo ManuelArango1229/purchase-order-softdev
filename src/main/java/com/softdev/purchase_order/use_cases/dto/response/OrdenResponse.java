@@ -50,25 +50,25 @@ public class OrdenResponse {
 
     /**
      * Constructor de la clase OrdenResponse.
-     * 
-     * @param idOrden      Identificador único de la orden.
-     * @param detalles     Lista de detalles de la orden.
-     * @param valorTotal   Valor total de la orden.
-     * @param metodoPago   Método de pago utilizado para la orden.
-     * @param dniCliente   DNI del cliente.
-     * @param fechaPedido  Fecha y hora en que se realizó el pedido.
+     *
+     * @param idOrdenParam      Identificador único de la orden.
+     * @param detallesParam     Lista de detalles de la orden.
+     * @param valorTotalParam   Valor total de la orden.
+     * @param metodoPagoParam   Método de pago utilizado para la orden.
+     * @param dniClienteParam   DNI del cliente.
+     * @param fechaPedidoParam  Fecha y hora en que se realizó el pedido.
      */
-    public OrdenResponse(UUID idOrden, List<DetalleOrdenResponse> detalles, 
-                         BigDecimal valorTotal, String metodoPago, 
-                         String dniCliente, LocalDateTime fechaPedido) {
+    public OrdenResponse(final UUID idOrdenParam, final List<DetalleOrdenResponse> detallesParam,
+                         final BigDecimal valorTotalParam, final String metodoPagoParam,
+                         final String dniClienteParam, final LocalDateTime fechaPedidoParam) {
         this.mensaje = "Pedido realizado satisfactoriamente";
-        this.idOrden = idOrden.toString();
-        this.detalles = detalles;
-        this.valorTotal = valorTotal;
-        this.metodoPago = metodoPago;
-        this.dniCliente = dniCliente;
-        this.fechaPedido = fechaPedido.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        this.urlRastreo = "/pedidos/rastrear/" + idOrden;
+        this.idOrden = idOrdenParam.toString();
+        this.detalles = detallesParam;
+        this.valorTotal = valorTotalParam;
+        this.metodoPago = metodoPagoParam;
+        this.dniCliente = dniClienteParam;
+        this.fechaPedido = fechaPedidoParam.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.urlRastreo = "/pedidos/rastrear/" + idOrdenParam;
     }
     /**
      * Constructor vacío para la deserialización de JSON.

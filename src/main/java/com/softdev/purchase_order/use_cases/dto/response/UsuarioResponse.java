@@ -21,7 +21,7 @@ public class UsuarioResponse {
      * Apellido del usuario.
      */
     private String dni;
-    
+
     /**
      * Constructor vacío para la deserialización de JSON.
      */

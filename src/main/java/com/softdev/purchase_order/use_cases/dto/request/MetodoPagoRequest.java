@@ -12,7 +12,7 @@ public class MetodoPagoRequest {
     /**
      * Tipo de método de pago.
      */
-    private String metodo_pago;
+    private String metodoPago;
     /**
      * Nombre del método de pago.
      */

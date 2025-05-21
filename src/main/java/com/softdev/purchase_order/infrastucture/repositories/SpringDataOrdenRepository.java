@@ -18,7 +18,4 @@ public interface SpringDataOrdenRepository extends JpaRepository<OrdenEntity, UU
      * @return Un Optional que contiene la orden si se encuentra, o vacío si no.
      */
     Optional<OrdenEntity> findById(UUID id);
-
-    // metodo save
-    
 }

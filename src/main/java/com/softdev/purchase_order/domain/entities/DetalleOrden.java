@@ -31,14 +31,14 @@ public class DetalleOrden {
     /**
      * Constructor que inicializa el detalle de la orden con el nombre del producto, cantidad y precio unitario.
      *
-     * @param nombreProducto Nombre del producto.
-     * @param cantidad       Cantidad de productos.
-     * @param precioUnitario Precio unitario del producto.
+     * @param nombreProductoParam Nombre del producto.
+     * @param cantidadParam       Cantidad de productos.
+     * @param precioUnitarioParam Precio unitario del producto.
      */
-    public DetalleOrden(final String nombreProducto, final int cantidad, final BigDecimal precioUnitario) {
-        this.nombreProducto = nombreProducto;
-        this.cantidad = cantidad;
-        this.precioUnitario = precioUnitario;
+    public DetalleOrden(final String nombreProductoParam, final int cantidadParam, final BigDecimal precioUnitarioParam) {
+        this.nombreProducto = nombreProductoParam;
+        this.cantidad = cantidadParam;
+        this.precioUnitario = precioUnitarioParam;
         this.subtotal = precioUnitario.multiply(BigDecimal.valueOf(cantidad));
     }
 

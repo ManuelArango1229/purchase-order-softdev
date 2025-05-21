@@ -26,7 +26,7 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
      *
      * @param webClientBuilder Constructor de WebClient.
      */
-    public UsuarioServiceAdapter(WebClient.Builder webClientBuilder) {
+    public UsuarioServiceAdapter(final WebClient.Builder webClientBuilder) {
         this.usuarioServiceUrl = "http://localhost:8080/usuario"; // Ajusta según la configuración de tu servicio
         this.webClient = webClientBuilder.baseUrl(usuarioServiceUrl).build();
     }
@@ -38,7 +38,7 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
      * @return Información del usuario.
      */
     @Override
-    public UsuarioResponse obtenerUsuario(String email) {
+    public UsuarioResponse obtenerUsuario(final String email) {
         return webClient.get()
                 .uri("/buscar/{email}", email)
                 .retrieve()

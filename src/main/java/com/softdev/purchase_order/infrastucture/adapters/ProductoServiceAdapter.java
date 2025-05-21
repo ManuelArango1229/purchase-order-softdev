@@ -3,7 +3,6 @@ package com.softdev.purchase_order.infrastucture.adapters;
 import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.http.MediaType;
 import java.math.BigDecimal;
 import java.util.Map;
 
@@ -118,7 +117,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Constructor que inicializa la respuesta del stock.
          *
-         * @param stock Cantidad de stock disponible.
+         * @return Cantidad de stock disponible.
          */
         public int getStock() {
             return stock;
@@ -126,10 +125,10 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece la cantidad de stock disponible del producto.
          *
-         * @param stock Cantidad de stock disponible.
+         * @param stockParam Cantidad de stock disponible.
          */
-        public void setStock(final int stock) {
-            this.stock = stock;
+        public void setStock(final int stockParam) {
+            this.stock = stockParam;
         }
     }
 
@@ -149,28 +148,25 @@ public class ProductoServiceAdapter implements ProductoServicePort {
 
         /**
          * Constructor que inicializa la solicitud de actualización de stock.
-         *
-         * @param nombreProducto Nombre del producto a actualizar.
-         * @param cantidad       Cantidad a agregar o restar del stock.
          */
-        public ActualizarStockRequest() {
+        ActualizarStockRequest() {
         }
 
         /**
          * Constructor que inicializa la solicitud de actualización de stock.
          *
-         * @param nombreProducto Nombre del producto a actualizar.
-         * @param cantidad       Cantidad a agregar o restar del stock.
+         * @param nombreProductoParam Nombre del producto a actualizar.
+         * @param cantidadParam       Cantidad a agregar o restar del stock.
          */
-        public ActualizarStockRequest(String nombreProducto, int cantidad) {
-            this.nombreProducto = nombreProducto;
-            this.cantidad = cantidad;
+        ActualizarStockRequest(final String nombreProductoParam, final int cantidadParam) {
+            this.nombreProducto = nombreProductoParam;
+            this.cantidad = cantidadParam;
         }
 
         /**
          * Establece el nombre del producto a actualizar.
          *
-         * @param nombreProducto Nombre del producto a actualizar.
+         * @return Nombre del producto a actualizar.
          */
         public String getNombreProducto() {
             return nombreProducto;
@@ -179,16 +175,16 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece el nombre del producto a actualizar.
          *
-         * @param nombreProducto Nombre del producto a actualizar.
+         * @param nombreProductoParam Nombre del producto a actualizar.
          */
-        public void setNombreProducto(String nombreProducto) {
-            this.nombreProducto = nombreProducto;
+        public void setNombreProducto(final String nombreProductoParam) {
+            this.nombreProducto = nombreProductoParam;
         }
 
         /**
          * Establece la cantidad a agregar o restar del stock.
          *
-         * @param cantidad Cantidad a agregar o restar del stock.
+         * @return Cantidad a agregar o restar del stock.
          */
         public int getCantidad() {
             return cantidad;
@@ -197,10 +193,10 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece la cantidad a agregar o restar del stock.
          *
-         * @param cantidad Cantidad a agregar o restar del stock.
+         * @param cantidadParam Cantidad a agregar o restar del stock.
          */
-        public void setCantidad(int cantidad) {
-            this.cantidad = cantidad;
+        public void setCantidad(final int cantidadParam) {
+            this.cantidad = cantidadParam;
         }
     }
 
@@ -223,11 +219,9 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         private int stock;
 
         /**
-         * Constructor que inicializa el producto con su nombre, precio y stock.
+         * Constructor que inicializa la respuesta del producto.
          *
-         * @param nombre Nombre del producto.
-         * @param precio Precio del producto.
-         * @param stock  Cantidad de stock disponible.
+         * @return Nombre del producto.
          */
         public String getNombre() {
             return nombre;
@@ -236,16 +230,16 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece el nombre del producto.
          *
-         * @param nombre Nombre del producto.
+         * @param nombreParam Nombre del producto.
          */
-        public void setNombre(final String nombre) {
-            this.nombre = nombre;
+        public void setNombre(final String nombreParam) {
+            this.nombre = nombreParam;
         }
 
         /**
          * Establece el precio del producto.
          *
-         * @param precio Precio del producto.
+         * @return Precio del producto.
          */
         public BigDecimal getPrecio() {
             return precio;
@@ -254,16 +248,16 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece el precio del producto.
          *
-         * @param precio Precio del producto.
+         * @param precioParam Precio del producto.
          */
-        public void setPrecio(final BigDecimal precio) {
-            this.precio = precio;
+        public void setPrecio(final BigDecimal precioParam) {
+            this.precio = precioParam;
         }
 
         /**
          * Establece la cantidad de stock disponible del producto.
          *
-         * @param stock Cantidad de stock disponible.
+         * @return Cantidad de stock disponible.
          */
         public int getStock() {
             return stock;
@@ -272,10 +266,10 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece la cantidad de stock disponible del producto.
          *
-         * @param stock Cantidad de stock disponible.
+         * @param stockParam Cantidad de stock disponible.
          */
-        public void setStock(final int stock) {
-            this.stock = stock;
+        public void setStock(final int stockParam) {
+            this.stock = stockParam;
         }
     }
 
@@ -287,11 +281,11 @@ public class ProductoServiceAdapter implements ProductoServicePort {
          * Indica si el producto existe.
          */
         private boolean existe;
-    
+
         /**
          * Constructor que inicializa la respuesta de existencia del producto.
          *
-         * @param existe Indica si el producto existe.
+         * @return Indica si el producto existe.
          */
         public boolean isExiste() {
             return existe;
@@ -300,10 +294,10 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         /**
          * Establece si el producto existe.
          *
-         * @param existe Indica si el producto existe.
+         * @param existeParam Indica si el producto existe.
          */
-        public void setExiste(boolean existe) {
-            this.existe = existe;
+        public void setExiste(final boolean existeParam) {
+            this.existe = existeParam;
         }
 }
 

@@ -1,11 +1,21 @@
 package com.softdev.purchase_order.infrastucture.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Clase que representa una orden de compra.
@@ -62,12 +72,10 @@ public class OrdenEntity {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "orden_id") // Campo FK en DetalleOrdenEntity
     private List<DetalleOrdenEntity> detalles = new ArrayList<>();
+
     /**
-     * Constructor que inicializa la orden con el correo electrónico, nombre y DNI del cliente.
-     *
-     * @param emailCliente  Correo electrónico del cliente.
-     * @param nombreCliente Nombre del cliente.
-     * @param dniCliente    DNI del cliente.
+     * Método que se ejecuta antes de persistir la entidad.
+     * Genera un UUID único para la orden si no se ha asignado uno.
      */
     @PrePersist
     public void prePersist() {
@@ -80,7 +88,7 @@ public class OrdenEntity {
      *
      * @param detalle Detalle de la orden a agregar.
      */
-    public void addDetalle(DetalleOrdenEntity detalle) {
+    public void addDetalle(final DetalleOrdenEntity detalle) {
         this.detalles.add(detalle);
     }
 }

@@ -26,7 +26,7 @@ public class BeanConfiguration {
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
     }
-    
+
     /**
      * Crea un bean de RealizarOrdenPort que implementa la lógica de negocio para realizar órdenes.
      *
@@ -37,9 +37,9 @@ public class BeanConfiguration {
      */
     @Bean
     public RealizarOrdenPort realizarOrdenUseCase(
-            OrdenRepositoryPort ordenRepository,
-            ProductoServicePort productoServicePort,
-            UsuarioServicePort usuarioServicePort) {
+            final OrdenRepositoryPort ordenRepository,
+            final ProductoServicePort productoServicePort,
+            final UsuarioServicePort usuarioServicePort) {
         return new RealizarOrdenService(ordenRepository, productoServicePort, usuarioServicePort);
     }
 }
