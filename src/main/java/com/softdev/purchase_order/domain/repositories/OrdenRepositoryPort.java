@@ -8,7 +8,7 @@ import java.util.UUID;
  * Interfaz que define el repositorio para las órdenes.
  * Proporciona métodos para guardar y buscar órdenes por su ID.
  */
-public interface OrdenRepository {
+public interface OrdenRepositoryPort {
     /**
      * Guarda una orden en el repositorio.
      *

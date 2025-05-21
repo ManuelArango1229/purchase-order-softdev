@@ -1,4 +1,4 @@
-package com.softdev.purchase_order.domain;
+package com.softdev.purchase_order.domain.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -53,20 +53,20 @@ public class Orden {
 
     /**
      * Imprime la información de la orden en formato de cadena.
-     * 
+     *
      * @return Cadena que representa la información de la orden.
      */
     public String toString() {
-        return "Orden{" +
-                "id=" + id +
-                ", emailCliente='" + emailCliente + '\'' +
-                ", nombreCliente='" + nombreCliente + '\'' +
-                ", dniCliente='" + dniCliente + '\'' +
-                ", detalles=" + detalles +
-                ", metodoPago=" + metodoPago +
-                ", valorTotal=" + valorTotal +
-                ", fechaPedido=" + fechaPedido +
-                ", estado=" + estado +
-                '}';
+        return "Orden{"
+                + "id=" + id
+                + ", emailCliente='" + emailCliente + '\''
+                + ", nombreCliente='" + nombreCliente + '\''
+                + ", dniCliente='" + dniCliente + '\''
+                + ", detalles=" + detalles
+                + ", metodoPago=" + metodoPago
+                + ", valorTotal=" + valorTotal
+                + ", fechaPedido=" + fechaPedido
+                + ", estado=" + estado
+                + '}';
     }
 }

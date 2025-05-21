@@ -1,4 +1,4 @@
-package com.softdev.purchase_order.use_cases.dto;
+package com.softdev.purchase_order.use_cases.dto.request;
 
 import java.util.List;
 

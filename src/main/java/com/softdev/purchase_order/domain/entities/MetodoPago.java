@@ -1,4 +1,4 @@
-package com.softdev.purchase_order.domain;
+package com.softdev.purchase_order.domain.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,12 +36,12 @@ public class MetodoPago {
      * @return Cadena que representa la información del método de pago.
      */
     public String toString() {
-        return "MetodoPago{" +
-                "nombre='" + nombre + '\'' +
-                ", numeroTarjeta='" + numeroTarjeta + '\'' +
-                ", fechaExpiracion='" + fechaExpiracion + '\'' +
-                ", cvv='" + cvv + '\'' +
-                ", nombreTitular='" + nombreTitular + '\'' +
-                '}';
+        return "MetodoPago{"
+                + "nombre='" + nombre + '\''
+                + ", numeroTarjeta='" + numeroTarjeta + '\''
+                + ", fechaExpiracion='" + fechaExpiracion + '\''
+                + ", cvv='" + cvv + '\''
+                + ", nombreTitular='" + nombreTitular + '\''
+                + '}';
     }
 }

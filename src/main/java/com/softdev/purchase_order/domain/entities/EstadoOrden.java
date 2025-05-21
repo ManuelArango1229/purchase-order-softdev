@@ -1,4 +1,4 @@
-package com.softdev.purchase_order.domain;
+package com.softdev.purchase_order.domain.entities;
 
 /**
  * Enum que representa los diferentes estados de una orden.
