@@ -6,6 +6,8 @@ import com.softdev.purchase_order.use_cases.dto.response.OrdenResponse;
 import com.softdev.purchase_order.use_cases.service.ObtenerOrdenConDetallesService;
 import com.softdev.purchase_order.domain.entities.Orden;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
+import com.softdev.purchase_order.use_cases.dto.response.ErrorResponse;
+import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.UUID;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -88,19 +92,6 @@ public class OrdenController {
     }
 
     /**
-     * Endpoint para obtener una orden con sus detalles por ID.
-     *
-     * @param id El ID de la orden a obtener.
-     * @return La respuesta con la información de la orden y sus detalles, o un error 404 si no se encuentra.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerOrdenConDetalles(final @PathVariable String id) {
-        return obtenerOrdenConDetallesService.ejecutar(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    /**
      * Endpoint para obtener una factura por ID de orden.
      * Este endpoint es similar a obtenerOrdenConDetalles, pero podría mapear a un DTO específico para la factura si es necesario.
      *
@@ -109,12 +100,22 @@ public class OrdenController {
      */
     @GetMapping("/factura/{id}")
     public ResponseEntity<?> obtenerFactura(final @PathVariable String id) {
-        return obtenerOrdenConDetallesService.ejecutar(id)
-            .map(ordenConDetallesDTO -> {
-                // Aquí podrías mapear a un DTO específico para la factura si es necesario
-                return ResponseEntity.ok(ordenConDetallesDTO);
-            })
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            UUID uuid = UUID.fromString(id);
+            Optional<OrdenConDetallesDTO> resultado = obtenerOrdenConDetallesService.ejecutar(uuid);
+
+            if (resultado.isPresent()) {
+                return ResponseEntity.ok(resultado.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("Orden no encontrada",
+                        "No se encontró una orden con el ID proporcionado."));
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("ID inválido",
+                    "El ID proporcionado no es un UUID válido."));
+        }
     }
 
     /**

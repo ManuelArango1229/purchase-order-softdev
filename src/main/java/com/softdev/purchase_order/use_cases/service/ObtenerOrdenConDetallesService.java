@@ -36,17 +36,16 @@ public class ObtenerOrdenConDetallesService {
      * @param ordenId El ID de la orden a buscar.
      * @return Un Optional que contiene la OrdenConDetallesDTO si se encuentra, o vacío si no.
      */
-    public Optional<OrdenConDetallesDTO> ejecutar(final String ordenId) {
+    public Optional<OrdenConDetallesDTO> ejecutar(final UUID ordenId) {
         try {
-            UUID uuid = UUID.fromString(ordenId);  // Conversión segura
-            Optional<Orden> ordenOpt = ordenRepositoryPort.findById(uuid);
+            Optional<Orden> ordenOpt = ordenRepositoryPort.findById(ordenId);
 
             if (ordenOpt.isEmpty()) {
                 return Optional.empty();
             }
 
             Orden orden = ordenOpt.get();
-            List<DetalleOrden> detalles = detalleOrdenRepositoryPort.findByOrdenId(uuid.toString());
+            List<DetalleOrden> detalles = detalleOrdenRepositoryPort.findByOrdenId(ordenId.toString());
 
             // If OrdenConDetallesDTO.from only accepts Orden, you may need to set details inside the DTO or modify as needed
             return Optional.of(OrdenConDetallesDTO.from(orden));
