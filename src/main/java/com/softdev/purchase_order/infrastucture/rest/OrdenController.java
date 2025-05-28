@@ -1,8 +1,11 @@
 package com.softdev.purchase_order.infrastucture.rest;
 
+import com.softdev.purchase_order.use_cases.dto.request.MetodoPagoRequest;
 import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
 import com.softdev.purchase_order.use_cases.dto.response.DetalleOrdenResponse;
 import com.softdev.purchase_order.use_cases.dto.response.OrdenResponse;
+import com.softdev.purchase_order.use_cases.exceptions.InvalidOrderException;
+import com.softdev.purchase_order.use_cases.exceptions.InvalidPaymentMethodException;
 import com.softdev.purchase_order.use_cases.service.ObtenerOrdenConDetallesService;
 import com.softdev.purchase_order.domain.entities.Orden;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
@@ -20,9 +23,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 /**
  * Controlador REST para manejar las operaciones relacionadas con las órdenes de compra.
@@ -60,36 +67,66 @@ public class OrdenController {
      * @return La respuesta con la información de la orden creada.
      */
     @PostMapping("/realizarOrden")
-    public ResponseEntity<OrdenResponse> realizarOrden(
+    public ResponseEntity<?> realizarOrden(
             final @RequestBody RealizarOrdenRequest request,
             final @RequestHeader("Authorization") String token) {
 
-        // Extraer el email del token (esto es un ejemplo, deberías implementar la lógica real)
-        String emailCliente = extraerEmailDelToken(token);
+        try {
+            // Extraer el email del token
+            String emailCliente = extraerEmailDelToken(token);
+            if (emailCliente == null || emailCliente.isBlank()) {
+                throw new InvalidOrderException("El token no contiene un correo válido.");
+            }
 
-        // Procesar la orden
-        Orden orden = realizarOrdenPort.realizarOrden(request, emailCliente);
+            // Validar Request
+            if (request.getProductos() == null || request.getProductos().isEmpty()) {
+                throw new InvalidOrderException("La orden debe contener al menos un producto.");
+            }
 
-        // Mapear respuesta
-        List<DetalleOrdenResponse> detallesResponse = orden.getDetalles().stream()
-                .map(detalle -> new DetalleOrdenResponse(
-                        detalle.getNombreProducto(),
-                        detalle.getPrecioUnitario(),
-                        detalle.getCantidad(),
-                        detalle.getSubtotal()))
-                .collect(Collectors.toList());
+            for (var producto : request.getProductos()) {
+                if (producto.getCantidad() <= 0) {
+                    throw new InvalidOrderException("La cantidad de producto debe ser mayor a 0.");
+                }
+            }
 
-        OrdenResponse response = new OrdenResponse(
-                orden.getId(),
-                detallesResponse,
-                orden.getValorTotal(),
-                orden.getMetodoPago().getNombre(),
-                orden.getDniCliente(),
-                orden.getFechaPedido()
-        );
+            if (request.getMetodoPago() == null) {
+                throw new InvalidPaymentMethodException("El método de pago es obligatorio.");
+            }
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            validarMetodoPago(request.getMetodoPago());
+
+            // Procesar la orden
+            Orden orden = realizarOrdenPort.realizarOrden(request, emailCliente);
+
+            // Mapear respuesta
+            List<DetalleOrdenResponse> detallesResponse = orden.getDetalles().stream()
+                    .map(detalle -> new DetalleOrdenResponse(
+                            detalle.getNombreProducto(),
+                            detalle.getPrecioUnitario(),
+                            detalle.getCantidad(),
+                            detalle.getSubtotal()))
+                    .collect(Collectors.toList());
+
+            OrdenResponse response = new OrdenResponse(
+                    orden.getId(),
+                    detallesResponse,
+                    orden.getValorTotal(),
+                    orden.getMetodoPago().getNombre(),
+                    orden.getDniCliente(),
+                    orden.getFechaPedido()
+            );
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+        } catch (InvalidOrderException | InvalidPaymentMethodException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Orden inválida", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Error interno", e.getMessage()));
+        }
     }
+
 
     /**
      * Endpoint para obtener una factura por ID de orden.
@@ -137,4 +174,44 @@ public class OrdenController {
         }
         throw new RuntimeException("Token inválido o no proporcionado");
     }
+
+    /**
+     * Método privado para validar el método de pago.
+     * Verifica que los campos del método de pago cumplan con los requisitos básicos.
+     *
+     * @param metodoPago El objeto que contiene la información del método de pago.
+     * @throws InvalidPaymentMethodException Si el método de pago no es válido.
+     */
+    private void validarMetodoPago(final MetodoPagoRequest metodoPago) {
+        if (metodoPago.getNumeroTarjeta() == null || !metodoPago.getNumeroTarjeta().matches("\\d{16}")) {
+            throw new InvalidPaymentMethodException("El número de tarjeta debe tener 16 dígitos.");
+        }
+
+        if (metodoPago.getCvv() == null || !metodoPago.getCvv().matches("\\d{3,4}")) {
+            throw new InvalidPaymentMethodException("El CVV debe tener 3 o 4 dígitos.");
+        }
+
+        if (metodoPago.getNombreTitular() == null || metodoPago.getNombreTitular().isBlank()) {
+            throw new InvalidPaymentMethodException("El nombre del titular es obligatorio.");
+        }
+
+        // Validar fecha de expiración (formato MM/yy)
+        if (metodoPago.getFechaExpiracion() == null || metodoPago.getFechaExpiracion().isBlank()) {
+            throw new InvalidPaymentMethodException("La fecha de expiración es obligatoria.");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+        YearMonth fechaExpiracion;
+        try {
+            fechaExpiracion = YearMonth.parse(metodoPago.getFechaExpiracion(), formatter);
+        } catch (DateTimeParseException e) {
+            throw new InvalidPaymentMethodException("Formato de fecha de expiración inválido. Debe ser MM/yy.");
+        }
+
+        YearMonth ahora = YearMonth.now();
+        if (fechaExpiracion.isBefore(ahora)) {
+            throw new InvalidPaymentMethodException("La tarjeta está vencida.");
+        }
+    }
+
 }
