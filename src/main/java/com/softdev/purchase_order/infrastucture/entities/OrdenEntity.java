@@ -70,7 +70,7 @@ public class OrdenEntity {
      * Lista de detalles de la orden.
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "orden_id") // Campo FK en DetalleOrdenEntity
+    @JoinColumn(name = "ordenId") // Campo FK en DetalleOrdenEntity
     private List<DetalleOrdenEntity> detalles = new ArrayList<>();
 
     /**

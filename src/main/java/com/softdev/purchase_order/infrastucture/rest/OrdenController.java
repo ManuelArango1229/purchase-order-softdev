@@ -3,6 +3,7 @@ package com.softdev.purchase_order.infrastucture.rest;
 import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
 import com.softdev.purchase_order.use_cases.dto.response.DetalleOrdenResponse;
 import com.softdev.purchase_order.use_cases.dto.response.OrdenResponse;
+import com.softdev.purchase_order.use_cases.service.ObtenerOrdenConDetallesService;
 import com.softdev.purchase_order.domain.entities.Orden;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
 
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -30,12 +33,19 @@ public class OrdenController {
     private final RealizarOrdenPort realizarOrdenPort;
 
     /**
+     * Servicio para obtener una orden con sus detalles.
+     */
+    private final ObtenerOrdenConDetallesService obtenerOrdenConDetallesService;
+
+    /**
      * Constructor que inicializa el controlador con el puerto de orden.
      *
      * @param realizarOrdenPortParam Puerto para realizar operaciones de orden.
+     * @param obtenerOrdenConDetallesServiceParam Servicio para obtener una orden con sus detalles.
      */
-    public OrdenController(final RealizarOrdenPort realizarOrdenPortParam) {
+    public OrdenController(final RealizarOrdenPort realizarOrdenPortParam, final ObtenerOrdenConDetallesService obtenerOrdenConDetallesServiceParam) {
         this.realizarOrdenPort = realizarOrdenPortParam;
+        this.obtenerOrdenConDetallesService = obtenerOrdenConDetallesServiceParam;
     }
 
     /**
@@ -75,6 +85,36 @@ public class OrdenController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    /**
+     * Endpoint para obtener una orden con sus detalles por ID.
+     *
+     * @param id El ID de la orden a obtener.
+     * @return La respuesta con la información de la orden y sus detalles, o un error 404 si no se encuentra.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtenerOrdenConDetalles(final @PathVariable String id) {
+        return obtenerOrdenConDetallesService.ejecutar(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Endpoint para obtener una factura por ID de orden.
+     * Este endpoint es similar a obtenerOrdenConDetalles, pero podría mapear a un DTO específico para la factura si es necesario.
+     *
+     * @param id El ID de la orden para la cual se desea obtener la factura.
+     * @return La respuesta con la información de la factura o un error 404 si no se encuentra.
+     */
+    @GetMapping("/factura/{id}")
+    public ResponseEntity<?> obtenerFactura(final @PathVariable String id) {
+        return obtenerOrdenConDetallesService.ejecutar(id)
+            .map(ordenConDetallesDTO -> {
+                // Aquí podrías mapear a un DTO específico para la factura si es necesario
+                return ResponseEntity.ok(ordenConDetallesDTO);
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**

@@ -113,7 +113,8 @@ public class OrdenRepositoryAdapter implements OrdenRepositoryPort {
             .map(det -> new DetalleOrden(
                 det.getNombreProducto(),
                 det.getCantidad(),
-                BigDecimal.valueOf(det.getPrecioUnitario())  // <-- convertir aquí
+                BigDecimal.valueOf(det.getPrecioUnitario()),  // <-- convertir aquí
+                det.getOrdenId()
             ))
             .collect(Collectors.toList());
 
