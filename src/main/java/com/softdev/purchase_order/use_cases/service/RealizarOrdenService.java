@@ -2,6 +2,7 @@ package com.softdev.purchase_order.use_cases.service;
 
 import com.softdev.purchase_order.use_cases.dto.request.ProductoOrdenRequest;
 import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
+import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
 import com.softdev.purchase_order.use_cases.dto.response.UsuarioResponse;
 import com.softdev.purchase_order.domain.entities.DetalleOrden;
 import com.softdev.purchase_order.domain.entities.EstadoOrden;
@@ -11,7 +12,7 @@ import com.softdev.purchase_order.domain.repositories.OrdenRepositoryPort;
 import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
 import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
-
+import com.softdev.purchase_order.infrastucture.messaging.OrdenPublisherService;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 /**
  * Servicio para realizar una orden de compra.
- * Implementa la lógica de negocio para procesar una orden.
+ * Implementa la lógica de negocio para procesar una orden y publicarla en RabbitMQ.
  */
 public class RealizarOrdenService implements RealizarOrdenPort {
 
@@ -39,6 +40,10 @@ public class RealizarOrdenService implements RealizarOrdenPort {
      * Servicio para manejar las operaciones de usuario.
      */
     private final UsuarioServicePort usuarioServicePort;
+    /**
+     * Servicio para publicar mensajes de órdenes a RabbitMQ.
+     */
+    private final OrdenPublisherService ordenPublisherService;
 
     /**
      * Constructor que inicializa el servicio con los repositorios necesarios.
@@ -46,17 +51,20 @@ public class RealizarOrdenService implements RealizarOrdenPort {
      * @param ordenRepositoryParam El repositorio de órdenes.
      * @param productoServicePortParam El servicio de productos.
      * @param usuarioServicePortParam El servicio de usuarios.
+     * @param ordenPublisherServiceParam El servicio para publicar órdenes en RabbitMQ.
      */
     public RealizarOrdenService(final OrdenRepositoryPort ordenRepositoryParam,
                                final ProductoServicePort productoServicePortParam,
-                               final UsuarioServicePort usuarioServicePortParam) {
+                               final UsuarioServicePort usuarioServicePortParam,
+                               final OrdenPublisherService ordenPublisherServiceParam) {
         this.ordenRepository = ordenRepositoryParam;
         this.productoServicePort = productoServicePortParam;
         this.usuarioServicePort = usuarioServicePortParam;
+        this.ordenPublisherService = ordenPublisherServiceParam;
     }
 
     /**
-     * Realiza una orden de compra.
+     * Realiza una orden de compra y la publica en RabbitMQ.
      *
      * @param request El objeto que contiene la información de la orden.
      * @param emailCliente El correo electrónico del cliente.
@@ -67,6 +75,7 @@ public class RealizarOrdenService implements RealizarOrdenPort {
     public Orden realizarOrden(final RealizarOrdenRequest request, final String emailCliente) {
         // 1. Obtener información del usuario
         UsuarioResponse usuario = usuarioServicePort.obtenerUsuario(emailCliente);
+        System.out.println("Direccion del cliente: " + usuario.getDireccion());
 
         // 2. Verificar y procesar productos
         List<DetalleOrden> detallesOrden = new ArrayList<>();
@@ -115,6 +124,7 @@ public class RealizarOrdenService implements RealizarOrdenPort {
             emailCliente,
             usuario.getNombre(),
             usuario.getDni(),
+            usuario.getDireccion(),
             detallesOrden,
             metodoPago,
             valorTotal,
@@ -123,6 +133,34 @@ public class RealizarOrdenService implements RealizarOrdenPort {
         );
 
         // 5. Guardar la orden
-        return ordenRepository.save(orden);
+        Orden ordenGuardada = ordenRepository.save(orden);
+
+        // 6. Convertir a DTO y publicar en RabbitMQ
+        try {
+            OrdenConDetallesDTO ordenDTO = OrdenConDetallesDTO.from(ordenGuardada);
+            ordenPublisherService.publicarOrden(ordenDTO);
+        } catch (Exception e) {
+            // Log del error pero no fallar la transacción
+            System.err.println("Error al publicar la orden en RabbitMQ: " + e.getMessage());
+            // Opcional: Podrías decidir si quieres que falle toda la transacción
+            // o solo registrar el error y continuar
+        }
+
+        return ordenGuardada;
+    }
+
+    /**
+     * Método adicional para reenviar una orden existente a RabbitMQ.
+     *
+     * @param orden La orden a reenviar.
+     */
+    public void reenviarOrdenARabbitMQ(final Orden orden) {
+        try {
+            OrdenConDetallesDTO ordenDTO = OrdenConDetallesDTO.from(orden);
+            ordenPublisherService.publicarOrdenConMensaje(ordenDTO, "Reenvío de orden");
+        } catch (Exception e) {
+            System.err.println("Error al reenviar la orden: " + e.getMessage());
+            throw new RuntimeException("Error al reenviar la orden a RabbitMQ", e);
+        }
     }
 }

@@ -33,6 +33,11 @@ public class OrdenConDetallesDTO {
      */
     private String dniCliente;
     /**
+     * Dirección de entrega de la orden, excluyendo datos sensibles.
+     * Este campo puede ser opcional o no estar presente en algunos casos.
+     */
+    private String direccion;
+    /**
      * Lista de detalles de la orden, sin información sensible como el ID de la orden.
      */
     private List<DetalleFacturaDTO> detalles;
@@ -62,6 +67,8 @@ public class OrdenConDetallesDTO {
         dto.emailCliente = orden.getEmailCliente();
         dto.nombreCliente = orden.getNombreCliente();
         dto.dniCliente = orden.getDniCliente();
+        dto.direccion = orden.getDireccion();
+        System.out.println("Direccion de entrega: " + dto.direccion);
         dto.valorTotal = orden.getValorTotal().doubleValue();
         dto.fechaPedido = orden.getFechaPedido().toString();
 
@@ -137,5 +144,25 @@ public class OrdenConDetallesDTO {
             m.nombre = metodoPago.getNombre() != null ? metodoPago.getNombre() : "Tarjeta de crédito";
             return m;
         }
+    }
+    /**
+     * Método toString para representar el DTO como una cadena.
+     * Incluye todos los campos relevantes, excluyendo información sensible.
+     *
+     * @return Una representación en cadena del objeto OrdenConDetallesDTO.
+     */
+    @Override
+    public String toString() {
+        return "OrdenConDetallesDTO{"
+                + "id='" + id + '\''
+                + ", emailCliente='" + emailCliente + '\''
+                + ", nombreCliente='" + nombreCliente + '\''
+                + ", dniCliente='" + dniCliente + '\''
+                + ", direccion='" + direccion + '\''
+                + ", detalles=" + detalles
+                + ", metodoPago=" + metodoPago
+                + ", valorTotal=" + valorTotal
+                + ", fechaPedido='" + fechaPedido + '\''
+                + '}';
     }
 }

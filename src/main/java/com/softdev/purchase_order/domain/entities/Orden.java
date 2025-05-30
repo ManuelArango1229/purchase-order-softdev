@@ -31,6 +31,10 @@ public class Orden {
      */
     private String dniCliente;
     /**
+     * Dirección de entrega de la orden.
+     */
+    private String direccion;
+    /**
      * Lista de detalles de la orden.
      */
     private List<DetalleOrden> detalles;
@@ -62,6 +66,7 @@ public class Orden {
                 + ", emailCliente='" + emailCliente + '\''
                 + ", nombreCliente='" + nombreCliente + '\''
                 + ", dniCliente='" + dniCliente + '\''
+                + ", direccion='" + direccion + '\''
                 + ", detalles=" + detalles
                 + ", metodoPago=" + metodoPago
                 + ", valorTotal=" + valorTotal

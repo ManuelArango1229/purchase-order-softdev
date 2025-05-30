@@ -74,6 +74,7 @@ public class OrdenRepositoryAdapter implements OrdenRepositoryPort {
         entity.setEmailCliente(orden.getEmailCliente());
         entity.setNombreCliente(orden.getNombreCliente());
         entity.setDniCliente(orden.getDniCliente());
+        entity.setDireccion(orden.getDireccion());
         entity.setValorTotal(orden.getValorTotal().doubleValue());
         entity.setFechaPedido(orden.getFechaPedido());
         entity.setEstado(orden.getEstado().name());
@@ -133,6 +134,7 @@ public class OrdenRepositoryAdapter implements OrdenRepositoryPort {
                 entity.getEmailCliente(),
                 entity.getNombreCliente(),
                 entity.getDniCliente(),
+                entity.getDireccion(),
                 detalles,
                 metodoPago,
                 BigDecimal.valueOf(entity.getValorTotal()),

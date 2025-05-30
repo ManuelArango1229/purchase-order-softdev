@@ -5,6 +5,7 @@ import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
 import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
 import com.softdev.purchase_order.use_cases.service.RealizarOrdenService;
+import com.softdev.purchase_order.infrastucture.messaging.OrdenPublisherService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,13 +34,16 @@ public class BeanConfiguration {
      * @param ordenRepository El repositorio de órdenes.
      * @param productoServicePort El servicio de productos.
      * @param usuarioServicePort El servicio de usuarios.
+     * @param ordenPublisherService El servicio para publicar órdenes en RabbitMQ.
+     *
      * @return Un objeto RealizarOrdenPort configurado.
      */
     @Bean
     public RealizarOrdenPort realizarOrdenUseCase(
             final OrdenRepositoryPort ordenRepository,
             final ProductoServicePort productoServicePort,
-            final UsuarioServicePort usuarioServicePort) {
-        return new RealizarOrdenService(ordenRepository, productoServicePort, usuarioServicePort);
+            final UsuarioServicePort usuarioServicePort,
+            final OrdenPublisherService ordenPublisherService) {
+        return new RealizarOrdenService(ordenRepository, productoServicePort, usuarioServicePort, ordenPublisherService);
     }
 }

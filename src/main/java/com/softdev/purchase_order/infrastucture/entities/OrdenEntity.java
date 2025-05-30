@@ -47,6 +47,11 @@ public class OrdenEntity {
     @Column(name = "dni_cliente")
     private String dniCliente;
     /**
+     * Dirección de entrega de la orden.
+     */
+    @Column(name = "direccion")
+    private String direccion;
+    /**
      * Valor total de la orden.
      */
     @Column(name = "valor_total")
