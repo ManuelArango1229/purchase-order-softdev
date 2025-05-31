@@ -1,34 +1,34 @@
 package com.softdev.purchase_order.infrastucture.rest;
 
-import com.softdev.purchase_order.use_cases.dto.request.MetodoPagoRequest;
-import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
-import com.softdev.purchase_order.use_cases.dto.response.DetalleOrdenResponse;
-import com.softdev.purchase_order.use_cases.dto.response.OrdenResponse;
-import com.softdev.purchase_order.use_cases.exceptions.InvalidOrderException;
-import com.softdev.purchase_order.use_cases.exceptions.InvalidPaymentMethodException;
-import com.softdev.purchase_order.use_cases.service.ObtenerOrdenConDetallesService;
-import com.softdev.purchase_order.domain.entities.Orden;
-import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
-import com.softdev.purchase_order.use_cases.dto.response.ErrorResponse;
-import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.UUID;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.softdev.purchase_order.domain.entities.Orden;
+import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
+import com.softdev.purchase_order.infrastucture.security.JwtUtils;
+import com.softdev.purchase_order.use_cases.dto.request.MetodoPagoRequest;
+import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
+import com.softdev.purchase_order.use_cases.dto.response.DetalleOrdenResponse;
+import com.softdev.purchase_order.use_cases.dto.response.ErrorResponse;
+import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
+import com.softdev.purchase_order.use_cases.dto.response.OrdenResponse;
+import com.softdev.purchase_order.use_cases.exceptions.InvalidOrderException;
+import com.softdev.purchase_order.use_cases.exceptions.InvalidPaymentMethodException;
+import com.softdev.purchase_order.use_cases.service.ObtenerOrdenConDetallesService;
 
 
 /**
@@ -68,15 +68,17 @@ public class OrdenController {
      */
     @PostMapping("/realizarOrden")
     public ResponseEntity<?> realizarOrden(
-            final @RequestBody RealizarOrdenRequest request,
-            final @RequestHeader("Authorization") String token) {
+            final @RequestBody RealizarOrdenRequest request) {
 
         try {
             // Extraer el email del token
-            String emailCliente = extraerEmailDelToken(token);
+            String emailCliente = JwtUtils.getClaim("sub");
             if (emailCliente == null || emailCliente.isBlank()) {
+                System.out.println("El token no contiene un correo valido: "+emailCliente);
                 throw new InvalidOrderException("El token no contiene un correo válido.");
             }
+            
+            System.out.println("Email del cliente: " + emailCliente);
 
             // Validar Request
             if (request.getProductos() == null || request.getProductos().isEmpty()) {
@@ -155,25 +157,23 @@ public class OrdenController {
         }
     }
 
-    /**
-     * Método privado para extraer el email del token JWT.
-     * Este es un ejemplo simplificado. En un escenario real, deberías usar una biblioteca JWT para decodificar el token.
-     *
-     * @param token El token JWT.
-     * @return El email extraído del token.
-     */
-    // Este método es simplificado. En un escenario real, utilizarías un servicio de autenticación
-    private String extraerEmailDelToken(final String token) {
-        // Aquí deberías implementar la lógica real para extraer el email del token JWT
-        // Por simplicidad, simulamos la extracción
-        if (token != null && token.startsWith("Bearer ")) {
-            //String jwtToken = token.substring(7);
-            // En un caso real, aquí decodificarías el token JWT y extraerías el claim 'email'
-            // Por ahora, simplemente retornamos un email de prueba
-            return "test7@correo.com";
-        }
-        throw new RuntimeException("Token inválido o no proporcionado");
-    }
+    // /**
+    //  * Método privado para extraer el email del token JWT.
+    //  * Este es un ejemplo simplificado. En un escenario real, deberías usar una biblioteca JWT para decodificar el token.
+    //  *
+    //  * @param token El token JWT.
+    //  * @return El email extraído del token.
+    //  */
+    // private String extraerEmailDelToken(final String token) {
+
+    //     String email = JwtUtils.getClaim("sub");
+
+    //     if (email != null && !email.isBlank()) {
+    //         return email;
+    //     }
+
+    //     throw new RuntimeException("Token inválido o no proporcionado");
+    // }
 
     /**
      * Método privado para validar el método de pago.
