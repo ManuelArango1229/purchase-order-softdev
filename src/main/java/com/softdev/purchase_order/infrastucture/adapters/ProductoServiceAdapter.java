@@ -1,10 +1,15 @@
 package com.softdev.purchase_order.infrastucture.adapters;
 
-import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import java.math.BigDecimal;
 import java.util.Map;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 
 /**
  * Adaptador para la interfaz de servicio de productos.
@@ -28,7 +33,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
      * @param webClientBuilder Constructor de WebClient.
      */
     public ProductoServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.productoServiceUrl = "http://localhost:8081/producto"; // Ajusta según la configuración de tu servicio
+        this.productoServiceUrl = "http://localhost:8081/producto";
         this.webClient = webClientBuilder.baseUrl(productoServiceUrl).build();
     }
 
@@ -49,6 +54,18 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         return response != null && response.isExiste();
     }
 
+    /**
+     * Función para acceder al token JWT.
+     * @return el token JWT
+     */
+    private String obtenerToken() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuthToken) {
+            Jwt jwt = jwtAuthToken.getToken();
+            return jwt.getTokenValue();
+        }
+        return null;
+    }
 
     /**
      * Verifica si hay suficiente stock disponible para un producto.
@@ -61,6 +78,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     public boolean verificarStock(final String nombreProducto, final int cantidad) {
         StockResponse response = webClient.get()
                 .uri("/stock/{nombre}", nombreProducto)
+                .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(StockResponse.class)
                 .block();
@@ -81,6 +99,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
 
         webClient.put()
             .uri("/stock/actualizar")
+            .header("Authorization", "Bearer " + obtenerToken())
             .bodyValue(Map.of("nombre", nombreProducto, "cantidad", cantidad))
             .retrieve()
             .bodyToMono(Void.class)
@@ -99,6 +118,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     public BigDecimal obtenerPrecio(final String nombreProducto) {
         ProductoResponse response = webClient.get()
                 .uri("/precio/{nombre}", nombreProducto)
+                .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(ProductoResponse.class)
                 .block();

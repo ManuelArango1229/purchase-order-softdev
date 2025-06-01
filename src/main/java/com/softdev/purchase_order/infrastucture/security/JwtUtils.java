@@ -5,7 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-/** 
+/**
  * Clase JwtUtils que proporciona funciones para obtener claims de un token JWT.
  */
 public class JwtUtils {
@@ -23,14 +23,13 @@ public class JwtUtils {
      * @return el valor del claim como {@link String}, o {@code null} si no hay autenticación
      *         válida o si el claim no está presente.
      */
-    public static String getClaim(String claim){
+    public static String getClaim(final String claim) {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (authentication instanceof JwtAuthenticationToken jwtAuthToken) {
             Jwt jwt = jwtAuthToken.getToken();
-            System.out.println("Correo: "+jwt.getClaimAsString(claim));
             return jwt.getClaimAsString(claim);
-        
+
         }
         return null;
     }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,22 +64,20 @@ public class OrdenController {
      * Endpoint para realizar una orden de compra.
      *
      * @param request El objeto que contiene la información de la orden.
-     * @param token   El token de autorización del cliente.
+     * @param token El token de autenticación del cliente.
      * @return La respuesta con la información de la orden creada.
      */
     @PostMapping("/realizarOrden")
     public ResponseEntity<?> realizarOrden(
-            final @RequestBody RealizarOrdenRequest request) {
+            final @RequestBody RealizarOrdenRequest request,
+            final @RequestHeader(value = "Authorization", required = false) String token) {
 
         try {
             // Extraer el email del token
             String emailCliente = JwtUtils.getClaim("sub");
             if (emailCliente == null || emailCliente.isBlank()) {
-                System.out.println("El token no contiene un correo valido: "+emailCliente);
                 throw new InvalidOrderException("El token no contiene un correo válido.");
             }
-            
-            System.out.println("Email del cliente: " + emailCliente);
 
             // Validar Request
             if (request.getProductos() == null || request.getProductos().isEmpty()) {
