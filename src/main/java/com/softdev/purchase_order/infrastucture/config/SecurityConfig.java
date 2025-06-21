@@ -1,6 +1,5 @@
 package com.softdev.purchase_order.infrastucture.config;
 
-
 import java.util.Base64;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -31,7 +30,6 @@ public class SecurityConfig {
 
 
     /**
-     * Filtro de seguridad de la aplicación, se hace uso del jwtdecoder definido abajo para decodificar el token
      * de la solicitud y agregarlo al contexto de seguridad de Spring.
      * @param http
      * @param jwtDecoder
@@ -42,6 +40,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(final HttpSecurity http, final JwtDecoder jwtDecoder) throws Exception {
 
         http
+
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
