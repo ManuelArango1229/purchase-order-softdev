@@ -1,8 +1,12 @@
 package com.softdev.purchase_order.infrastucture.adapters;
 
-import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
 import com.softdev.purchase_order.use_cases.dto.response.UsuarioResponse;
 
 /**
@@ -27,8 +31,23 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
      * @param webClientBuilder Constructor de WebClient.
      */
     public UsuarioServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.usuarioServiceUrl = "http://localhost:8080/usuario"; // Ajusta según la configuración de tu servicio
+        this.usuarioServiceUrl = "http://localhost:8080/usuario";
         this.webClient = webClientBuilder.baseUrl(usuarioServiceUrl).build();
+    }
+
+    /**
+     * Obtiene el token JWT desde el contexto de seguridad.
+     *
+     * @return Token JWT.
+     * @throws Exception
+     */
+    private String obtenerToken() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtAuthenticationToken jwtAuthToken) {
+            Jwt jwt = jwtAuthToken.getToken();
+            return jwt.getTokenValue();
+        }
+        return null;
     }
 
     /**
@@ -41,6 +60,7 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
     public UsuarioResponse obtenerUsuario(final String email) {
         return webClient.get()
                 .uri("/buscar/{email}", email)
+                .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(UsuarioResponse.class)
                 .block();

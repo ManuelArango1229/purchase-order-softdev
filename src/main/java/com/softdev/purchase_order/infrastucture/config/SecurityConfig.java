@@ -1,4 +1,5 @@
 package com.softdev.purchase_order.infrastucture.config;
+
 import java.util.Base64;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -29,7 +30,6 @@ public class SecurityConfig {
 
 
     /**
-     * Filtro de seguridad de la aplicaciÃ³n, se hace uso del jwtdecoder definido abajo para decodificar el token
      * de la solicitud y agregarlo al contexto de seguridad de Spring.
      * @param http
      * @param jwtDecoder
@@ -40,18 +40,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(final HttpSecurity http, final JwtDecoder jwtDecoder) throws Exception {
 
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .anyRequest().authenticated()
+
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/ordenes/**").hasRole("CLIENTE")
+                .anyRequest().authenticated()
+            )
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt
+                    .decoder(jwtDecoder)
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                );
+            );
 
         return http.build();
     }

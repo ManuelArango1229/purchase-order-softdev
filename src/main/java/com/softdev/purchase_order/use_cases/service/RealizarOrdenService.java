@@ -1,9 +1,13 @@
 package com.softdev.purchase_order.use_cases.service;
 
-import com.softdev.purchase_order.use_cases.dto.request.ProductoOrdenRequest;
-import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
-import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
-import com.softdev.purchase_order.use_cases.dto.response.UsuarioResponse;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import com.softdev.purchase_order.domain.entities.DetalleOrden;
 import com.softdev.purchase_order.domain.entities.EstadoOrden;
 import com.softdev.purchase_order.domain.entities.MetodoPago;
@@ -13,14 +17,10 @@ import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
 import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
 import com.softdev.purchase_order.infrastucture.messaging.OrdenPublisherService;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.softdev.purchase_order.use_cases.dto.request.ProductoOrdenRequest;
+import com.softdev.purchase_order.use_cases.dto.request.RealizarOrdenRequest;
+import com.softdev.purchase_order.use_cases.dto.response.OrdenConDetallesDTO;
+import com.softdev.purchase_order.use_cases.dto.response.UsuarioResponse;
 
 /**
  * Servicio para realizar una orden de compra.
@@ -75,7 +75,6 @@ public class RealizarOrdenService implements RealizarOrdenPort {
     public Orden realizarOrden(final RealizarOrdenRequest request, final String emailCliente) {
         // 1. Obtener información del usuario
         UsuarioResponse usuario = usuarioServicePort.obtenerUsuario(emailCliente);
-        System.out.println("Direccion del cliente: " + usuario.getDireccion());
 
         // 2. Verificar y procesar productos
         List<DetalleOrden> detallesOrden = new ArrayList<>();
