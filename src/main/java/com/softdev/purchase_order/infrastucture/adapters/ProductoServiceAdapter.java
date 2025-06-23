@@ -33,7 +33,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
      * @param webClientBuilder Constructor de WebClient.
      */
     public ProductoServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.productoServiceUrl = "http://localhost:8081/producto";
+        this.productoServiceUrl = "lb://product-service/producto";
         this.webClient = webClientBuilder.baseUrl(productoServiceUrl).build();
     }
 
