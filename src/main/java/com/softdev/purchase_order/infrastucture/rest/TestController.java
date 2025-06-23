@@ -35,4 +35,14 @@ public class TestController {
     public List<ServiceInstance> getInstances(final @PathVariable String serviceName) {
         return discoveryClient.getInstances(serviceName);
     }
+
+    /**
+     * Muestra un mensaje de prueba.
+     *
+     * @return El mensaje de prueba.
+     */
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
 }
