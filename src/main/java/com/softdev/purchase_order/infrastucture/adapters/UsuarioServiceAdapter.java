@@ -23,16 +23,20 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
     /**
      * URL base del servicio de usuarios.
      */
-    private final String usuarioServiceUrl;
+    private final String usuarioServiceUrl = "lb://user-service/usuario";
+
+    // public UsuarioServiceAdapter(final WebClient.Builder webClientBuilder) {
+    //     this.usuarioServiceUrl = "lb://user-service/usuario";
+    //     this.webClient = webClientBuilder.baseUrl(usuarioServiceUrl).build();
+    // }
 
     /**
      * Constructor que inicializa el adaptador con el cliente WebClient.
      *
-     * @param webClientBuilder Constructor de WebClient.
+     * @param client Cliente WebClient.
      */
-    public UsuarioServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.usuarioServiceUrl = "lb://user-service/usuario";
-        this.webClient = webClientBuilder.baseUrl(usuarioServiceUrl).build();
+    public UsuarioServiceAdapter(final WebClient client) {
+        this.webClient = client;
     }
 
     /**
@@ -59,7 +63,7 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
     @Override
     public UsuarioResponse obtenerUsuario(final String email) {
         return webClient.get()
-                .uri("/buscar/{email}", email)
+                .uri(usuarioServiceUrl + "/buscar/{email}", email)
                 .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(UsuarioResponse.class)

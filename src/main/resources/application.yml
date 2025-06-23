@@ -14,12 +14,20 @@ spring:
         max-attempts: 3
         max-interval: 10000
         multiplier: 1.0
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
 
 
 eureka:
   client:
     service-url:
       defaultZone: http://eureka-service:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: true
   instance:
     instance-id: ${spring.application.name}:${POD_IP}:${server.port}
     hostname: purchase-order-service
@@ -37,3 +45,10 @@ management:
   endpoint:
     health:
       show-details: always
+
+
+logging:
+  level:
+    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG

@@ -25,16 +25,20 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     /**
      * URL base del servicio de productos.
      */
-    private final String productoServiceUrl;
+    private final String productoServiceUrl = "lb://product-service/producto";
+
+    // public ProductoServiceAdapter(final WebClient.Builder webClientBuilder) {
+    //     this.productoServiceUrl = "lb://product-service/producto";
+    //     this.webClient = webClientBuilder.baseUrl(productoServiceUrl).build();
+    // }
 
     /**
      * Constructor que inicializa el adaptador con el cliente WebClient.
      *
-     * @param webClientBuilder Constructor de WebClient.
+     * @param client Cliente WebClient.
      */
-    public ProductoServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.productoServiceUrl = "lb://product-service/producto";
-        this.webClient = webClientBuilder.baseUrl(productoServiceUrl).build();
+    public ProductoServiceAdapter(final WebClient client) {
+        this.webClient = client;
     }
 
     /**
@@ -46,7 +50,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     @Override
     public boolean existeProducto(final String nombreProducto) {
         ExisteResponse response = webClient.get()
-                .uri("/existe/{nombre}", nombreProducto)
+                .uri(productoServiceUrl + "/existe/{nombre}", nombreProducto)
                 .retrieve()
                 .bodyToMono(ExisteResponse.class)
                 .block();
@@ -77,7 +81,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     @Override
     public boolean verificarStock(final String nombreProducto, final int cantidad) {
         StockResponse response = webClient.get()
-                .uri("/stock/{nombre}", nombreProducto)
+                .uri(productoServiceUrl + "/stock/{nombre}", nombreProducto)
                 .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(StockResponse.class)
@@ -98,7 +102,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
         ActualizarStockRequest request = new ActualizarStockRequest(nombreProducto, cantidad);
 
         webClient.put()
-            .uri("/stock/actualizar")
+            .uri(productoServiceUrl + "/stock/actualizar")
             .header("Authorization", "Bearer " + obtenerToken())
             .bodyValue(Map.of("nombre", nombreProducto, "cantidad", cantidad))
             .retrieve()
