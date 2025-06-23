@@ -31,7 +31,7 @@ public class UsuarioServiceAdapter implements UsuarioServicePort {
      * @param webClientBuilder Constructor de WebClient.
      */
     public UsuarioServiceAdapter(final WebClient.Builder webClientBuilder) {
-        this.usuarioServiceUrl = "http://localhost:8080/usuario";
+        this.usuarioServiceUrl = "lb://user-service/usuario";
         this.webClient = webClientBuilder.baseUrl(usuarioServiceUrl).build();
     }
 
