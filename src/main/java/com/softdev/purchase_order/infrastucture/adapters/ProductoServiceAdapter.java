@@ -121,7 +121,7 @@ public class ProductoServiceAdapter implements ProductoServicePort {
     @Override
     public BigDecimal obtenerPrecio(final String nombreProducto) {
         ProductoResponse response = webClient.get()
-                .uri("/precio/{nombre}", nombreProducto)
+                .uri(productoServiceUrl + "/precio/{nombre}", nombreProducto)
                 .header("Authorization", "Bearer " + obtenerToken())
                 .retrieve()
                 .bodyToMono(ProductoResponse.class)
