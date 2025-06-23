@@ -13,7 +13,7 @@ public class WebClientConfig {
 
     /**
      * Crea un bean de WebClient.Builder para realizar llamadas HTTP.
-     * 
+     *
      * @return Un WebClient.Builder configurado.
      */
     @Bean
