@@ -46,6 +46,10 @@ spring:
           max-attempts: 3
           max-interval: 10000
           multiplier: 1.0
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
 
 eureka:
   client:
@@ -67,11 +71,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,rabbitmq
   endpoint:
     health:
       show-details: always
-
+  health:
+    rabbit:
+      enabled: true
 
 logging:
   level:
