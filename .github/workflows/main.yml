@@ -26,9 +26,9 @@ jobs:
       - name: Crear archivo de secrets
         run: echo "${{ secrets.APP_SECRETS }}" > src/main/resources/application-secrets.properties
 
-      - name: 🏗️ Build Docker image
+      - name: 🏗️ Build Docker image (no cache)
         run: |
-          docker build -t manuelarango1229/softdev:purchase-order-service .
+          docker build --no-cache -t manuelarango1229/softdev:purchase-order-service .
 
       - name: 📤 Push image to Docker Hub
         run: |
