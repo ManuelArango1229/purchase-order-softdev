@@ -1,21 +1,24 @@
 package com.softdev.purchase_order.infrastucture.config;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import com.softdev.purchase_order.domain.repositories.OrdenRepositoryPort;
 import com.softdev.purchase_order.domain.repositories.ProductoServicePort;
 import com.softdev.purchase_order.domain.repositories.RealizarOrdenPort;
 import com.softdev.purchase_order.domain.repositories.UsuarioServicePort;
-import com.softdev.purchase_order.use_cases.service.RealizarOrdenService;
 import com.softdev.purchase_order.infrastucture.messaging.OrdenPublisherService;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
+import com.softdev.purchase_order.use_cases.service.RealizarOrdenService;
 
 /**
  * Configuración de beans para la aplicación.
  * Esta clase define los beans necesarios para la inyección de dependencias.
  */
 @Configuration
+@LoadBalancerClient(name = "product-service")
 public class BeanConfiguration {
 
     /**
@@ -24,8 +27,21 @@ public class BeanConfiguration {
      * @return Un WebClient.Builder configurado.
      */
     @Bean
+    @LoadBalanced
     public WebClient.Builder webClientBuilder() {
         return WebClient.builder();
+    }
+
+    /**
+     * Crea un bean de WebClient para realizar llamadas HTTP.
+     *
+     * @param builder El builder de WebClient.
+     *
+     * @return Un WebClient configurado.
+     */
+    @Bean
+    public WebClient webClient(final @LoadBalanced WebClient.Builder builder) {
+        return builder.build();
     }
 
     /**
