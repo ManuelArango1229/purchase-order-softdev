@@ -10,6 +10,6 @@ FROM   eclipse-temurin:21-jre
 
 COPY --from=builder /app/target/purchase-order-service-0.0.1-SNAPSHOT.jar /app/purchase-order-service.jar
 
-EXPOSE 8080
+EXPOSE 8083
 
 CMD ["java", "-jar", "/app/purchase-order-service.jar"]

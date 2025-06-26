@@ -1,0 +1,86 @@
+# spring:
+#   rabbitmq:
+#     host: localhost
+#     port: 5672
+#     username: guest
+#     password: guest
+#     virtual-host: /
+#     connection-timeout: 60000
+#     template:
+#       retry:
+#         enabled: true
+#         initial-interval: 1000
+#         max-attempts: 3
+#         max-interval: 10000
+#         multiplier: 1.0
+#   cloud:
+#     loadbalancer:
+#       ribbon:
+#         enabled: false
+
+
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq-service.messaging.svc.cluster.local}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:rabbitmq123}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
+    connection-timeout: 60000
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      retry:
+        enabled: true
+        initial-interval: 1000
+        max-attempts: 3
+        max-interval: 10000
+        multiplier: 1.0
+      mandatory: true
+    listener:
+      simple:
+        acknowledge-mode: manual
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 1.0
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-service:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: true
+  instance:
+    instance-id: ${spring.application.name}:${POD_IP}:${server.port}
+    hostname: purchase-order-service
+    prefer-ip-address: false
+    health-check-url-path: /actuator/health
+    status-page-url-path: /actuator/info
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,rabbitmq
+  endpoint:
+    health:
+      show-details: always
+  health:
+    rabbit:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
